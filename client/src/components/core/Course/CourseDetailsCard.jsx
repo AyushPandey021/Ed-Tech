@@ -22,10 +22,12 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
+ 
   const {
     thumbnail: ThumbnailImage,
     price: CurrentPrice,
-    // _id: courseid,
+    // _id: _id,
+  
   } = course
 
   const handleShare = () => {
@@ -51,6 +53,7 @@ function CourseDetailsCard({ course, setConfirmationModal, handleBuyCourse }) {
       btn2Handler: () => setConfirmationModal(null),
     })
   }
+
 
 
 
