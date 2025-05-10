@@ -16,9 +16,6 @@ const dotenv=require("dotenv");
 
 
 
-
-
-
 dotenv.config();
 const PORT =process.env.PORT || 4000;
 
@@ -28,13 +25,17 @@ database.connect();
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
-app.use(
-    cors({
-        origin:["http://localhost:3000",
-         "https://study-notion-rouge.vercel.app"],
-        credentials:true
-    })
-)
+
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true
+  }));
+
+  const allowedOrigins = [
+    "http://localhost:3000",
+    "https://study-notion-rouge.vercel.app"
+  ];
+
 app.use(fileUpload({
     useTempFiles:true,
     tempFileDir:"/tmp/"
