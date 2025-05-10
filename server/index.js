@@ -1,6 +1,6 @@
  const express=require("express");
  const app=express();
-
+ const cors=require("cors");
  const useRoutes=require("./routes/User");
  const profileRoutes = require("./routes/Profile");
  const paymentRoutes = require("./routes/Payment");
@@ -15,6 +15,10 @@ const fileUpload=require("express-fileupload");
 const dotenv=require("dotenv");
 
 
+
+
+
+
 dotenv.config();
 const PORT =process.env.PORT || 4000;
 
@@ -26,7 +30,8 @@ app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
 app.use(
     cors({
-        origin:"http://localhost:3000",
+        origin:["http://localhost:3000",
+         "https://study-notion-rouge.vercel.app"],
         credentials:true
     })
 )
