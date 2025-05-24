@@ -145,9 +145,8 @@ exports.updateDisplayPicture = async (req, res) => {
 exports.getEnrolledCourses = async (req, res) => {
   try {
     const userId = req.user.id;
-    let userDetails = await User.findOne({
-      _id: userId,
-    })
+
+    let userDetails = await User.findOne({ _id: userId })
       .populate({
         path: "courses",
         populate: {
@@ -158,57 +157,63 @@ exports.getEnrolledCourses = async (req, res) => {
         },
       })
       .exec();
-    userDetails = userDetails.toObject();
-    var SubsectionLength = 0;
-    for (var i = 0; i < userDetails.courses.length; i++) {
-      let totalDurationInSeconds = 0;
-      SubsectionLength = 0;
-      for (var j = 0; j < userDetails.courses[i].courseContent.length; j++) {
-        totalDurationInSeconds += userDetails.courses[i].courseContent[
-          j
-        ].subSection.reduce(
-          (acc, curr) => acc + parseInt(curr.timeDuration),
-          0
-        );
-        userDetails.courses[i].totalDuration = convertSecondsToDuration(
-          totalDurationInSeconds
-        );
-        SubsectionLength +=
-          userDetails.courses[i].courseContent[j].subSection.length;
-      }
-      let courseProgressCount = await CourseProgress.findOne({
-        courseID: userDetails.courses[i]._id,
-        userId: userId,
-      });
-      courseProgressCount = courseProgressCount?.completedVideos.length;
-      if (SubsectionLength === 0) {
-        userDetails.courses[i].progressPercentage = 100;
-      } else {
-        const multiplier = Math.pow(10, 2);
-        userDetails.courses[i].progressPercentage =
-          Math.round(
-            (courseProgressCount / SubsectionLength) * 100 * multiplier
-          ) / multiplier;
-      }
-    }
 
     if (!userDetails) {
       return res.status(400).json({
         success: false,
-        message: `Could not find user with id: ${userDetails}`,
+        message: `Could not find user with id: ${userId}`,
       });
     }
+
+    userDetails = userDetails.toObject();
+
+    for (let i = 0; i < userDetails.courses.length; i++) {
+      let totalDurationInSeconds = 0;
+      let subSectionLength = 0;
+
+      for (let j = 0; j < userDetails.courses[i].courseContent.length; j++) {
+        totalDurationInSeconds += userDetails.courses[i].courseContent[j].subSection.reduce(
+          (acc, curr) => acc + parseInt(curr.timeDuration || "0"),
+          0
+        );
+        subSectionLength += userDetails.courses[i].courseContent[j].subSection.length;
+      }
+
+      // Convert total duration to readable format
+      userDetails.courses[i].totalDuration = convertSecondsToDuration(totalDurationInSeconds);
+
+      // Get course progress
+      const courseProgress = await CourseProgress.findOne({
+        courseID: userDetails.courses[i]._id,
+        userId: userId,
+      });
+
+      const completedCount = courseProgress ? courseProgress.completedVideos.length : 0;
+
+      if (subSectionLength === 0) {
+        userDetails.courses[i].progressPercentage = 100;
+      } else {
+        const multiplier = Math.pow(10, 2); // for 2 decimal precision
+        userDetails.courses[i].progressPercentage =
+          Math.round((completedCount / subSectionLength) * 100 * multiplier) / multiplier;
+      }
+    }
+
     return res.status(200).json({
       success: true,
       data: userDetails.courses,
     });
+
   } catch (error) {
+    console.error("Error getting enrolled courses:", error);
     return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
+
+
 
 exports.instructorDashboard = async (req, res) => {
   try {

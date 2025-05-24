@@ -14,7 +14,7 @@ const {
 
 // Load the Razorpay SDK from the CDN
 function loadScript(src) {
-  return new Promise((resolve) => {
+   return new Promise((resolve) => {
     const script = document.createElement("script")
     script.src = src
     script.onload = () => {
@@ -66,10 +66,10 @@ export async function BuyCourse(
 
     // Opening the Razorpay SDK
     const options = {
-      key: "rzp_test_t4LUM04KXw6wHc",
+      key:"rzp_test_UYw15UrHIKY0sR",
       currency: orderResponse.data.data.currency,
       amount: `${orderResponse.data.data.amount}`,
-      order_id: orderResponse.data.data.id,
+      order_id: orderResponse.data.data.orderId,
       name: "StudyNotion",
       description: "Thank you for Purchasing the Course.",
       image: rzpLogo,
@@ -78,12 +78,20 @@ export async function BuyCourse(
         email: user_details.email,
       },
       handler: function (response) {
+         // ✅ Send proper fields to backend
+        const verificationData = {
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_signature: response.razorpay_signature,
+          courses,
+        }
         sendPaymentSuccessEmail(response, orderResponse.data.data.amount, token)
-        verifyPayment({ ...response, courses }, token, navigate, dispatch)
+        verifyPayment(verificationData, token, navigate, dispatch)
       },
+    
     }
+    
     const paymentObject = new window.Razorpay(options)
-
     paymentObject.open()
     paymentObject.on("payment.failed", function (response) {
       toast.error("Oops! Payment Failed.")
@@ -121,6 +129,8 @@ async function verifyPayment(bodyData, token, navigate, dispatch) {
   toast.dismiss(toastId)
   dispatch(setPaymentLoading(false))
 }
+
+
 
 // Send the Payment Success Email
 async function sendPaymentSuccessEmail(response, amount, token) {

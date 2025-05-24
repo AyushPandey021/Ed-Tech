@@ -18,10 +18,10 @@ export default function EnrolledCourses() {
 
         // Filtering the published course out
         const filterPublishCourse = res.filter((ele) => ele.status !== "Draft")
-        // console.log(
-        //   "Viewing all the couse that is Published",
-        //   filterPublishCourse
-        // )
+        console.log(
+          "Viewing all the couse that is Published",
+          filterPublishCourse
+        )
 
         setEnrolledCourses(filterPublishCourse)
       } catch (error) {

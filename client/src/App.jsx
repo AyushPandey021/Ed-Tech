@@ -14,7 +14,7 @@ import Instructor from "./components/core/Dashboard/Instructor";
 import MyCourses from "./components/core/Dashboard/MyCourses";
 import MyProfile from "./components/core/Dashboard/MyProfile";
 import Settings from "./components/core/Dashboard/Settings";
-// import VideoDetails from "./components/core/ViewCourse/VideoDetails";
+import VideoDetails from "./components/core/ViewCourse/VideoDetails";
 import About from "./pages/About";
 import Catalog from './pages/Catalog';
 import Contact from "./pages/Contact";
@@ -27,7 +27,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import UpdatePassword from "./pages/UpdatePassword";
 import VerifyEmail from "./pages/VerifyEmail";
-// import ViewCourse from "./pages/ViewCourse";
+ import ViewCourse from "./pages/ViewCourse";
 import { getUserDetails } from "./Service/Operation/profileAPI";
 import { ACCOUNT_TYPE } from './Util/constants'
 
@@ -84,13 +84,12 @@ function App() {
             </>
           )} 
         </Route>
-
         {/* View Course (Only for Students) */}
-        {/* {user && user.accountType === ACCOUNT_TYPE.STUDENT && (
+        {user && user.accountType === ACCOUNT_TYPE.STUDENT && (
           <Route element={<PrivateRoute><ViewCourse /></PrivateRoute>}>
             <Route path="view-course/:courseId/section/:sectionId/sub-section/:subSectionId" element={<VideoDetails />} />
           </Route>
-        )} */}
+        )} 
 
         {/* 404 Page */}
         <Route path="*" element={<Error />} />
