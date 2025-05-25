@@ -223,21 +223,20 @@ exports.instructorDashboard = async (req, res) => {
       const totalStudentsEnrolled = course.studentsEnroled.length;
       const totalAmountGenerated = totalStudentsEnrolled * course.price;
 
-      const courseDataWithStats = {
+      return {
         _id: course._id,
         courseName: course.courseName,
         courseDescription: course.courseDescription,
-
         totalStudentsEnrolled,
         totalAmountGenerated,
       };
-
-      return courseDataWithStats;
     });
 
-    res.status(200).json({ courses: courseData });
+    
+    res.status(200).json({ success: true, courses: courseData });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+

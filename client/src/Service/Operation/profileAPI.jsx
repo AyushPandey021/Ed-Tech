@@ -94,6 +94,8 @@ export async function getInstructorData(token) {
       Authorization: `Bearer ${token}`,
     });
 
+    console.log("GET_INSTRUCTOR_DATA_API response:", response);
+
     if (!response?.data?.success) {
       throw new Error("Failed to fetch instructor data");
     }
@@ -108,3 +110,4 @@ export async function getInstructorData(token) {
 
   return result;
 }
+
