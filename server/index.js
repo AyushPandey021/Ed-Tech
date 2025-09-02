@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 4000;
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://study-notion-rouge.vercel.app"
+  // "https://study-notion-rouge.vercel.app"
 ];
 
 app.use(cors({
